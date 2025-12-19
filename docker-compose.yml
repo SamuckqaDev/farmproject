@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:lastest
+    image: postgres:16
     container_name: farm_db
     restart: always
     environment:

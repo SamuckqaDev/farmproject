@@ -20,13 +20,14 @@ import lombok.NoArgsConstructor;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    private UUID idCostumer;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID idCustomer;
 
-    @Column(nullable = false, length = 144)
+    @Column(name = "name", nullable = false, length = 144)
     private String name;
 
+    // Ajustado o name para bater com o "elegible_discount" do seu Liquibase
     @Column(name = "elegible_discount", nullable = false)
     private boolean eligibleDiscount;
-    
+
 }

@@ -6,7 +6,7 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/farm_db 
-    username: samuckqadev
+    username: duck
     password: duck_pass
     driver-class-name: org.postgresql.Driver  
 
@@ -20,6 +20,7 @@ spring:
         format_sql: true
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    drop-first: true
+    change-log: classpath:db/changelog/db.changelog-master.yml
     enabled: true
 
