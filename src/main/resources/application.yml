@@ -8,7 +8,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/farm_db 
     username: samuckqadev
     password: duck_pass
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver  
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

@@ -1,0 +1,188 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: samuckqadev
+      changes:
+        # CUSTOMER
+        - createTable:
+            tableName: tb_customer
+            columns:
+              - column:
+                  {
+                    name: idCustomer,
+                    type: UUID,
+                    defaultValueComputed: "gen_random_uuid()",
+                    constraints: { primaryKey: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: name,
+                    type: VARCHAR(144),
+                    constraints: { nullable: false },
+                  }
+              - column:
+                  {
+                    name: elegible_discount,
+                    type: BOOLEAN,
+                    defaultValueBoolean: false,
+                  }
+
+        # SELLER
+        - createTable:
+            tableName: tb_seller
+            columns:
+              - column:
+                  {
+                    name: idSeller,
+                    type: UUID,
+                    defaultValueComputed: "gen_random_uuid()",
+                    constraints: { primaryKey: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: name,
+                    type: VARCHAR(255),
+                    constraints: { nullable: false },
+                  }
+              - column:
+                  {
+                    name: cpf,
+                    type: VARCHAR(14),
+                    constraints: { unique: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: registration,
+                    type: VARCHAR(50),
+                    constraints: { unique: true, nullable: false },
+                  }
+
+        # DUCK
+        - createTable:
+            tableName: tb_duck
+            columns:
+              - column:
+                  {
+                    name: idDuck,
+                    type: UUID,
+                    defaultValueComputed: "gen_random_uuid()",
+                    constraints: { primaryKey: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: name,
+                    type: VARCHAR(255),
+                    constraints: { nullable: false },
+                  }
+              - column:
+                  {
+                    name: idMother,
+                    type: UUID,
+                    constraints:
+                      {
+                        foreignKeyName: fk_duck_mother,
+                        referencedTableName: tb_duck,
+                        referencedColumnNames: idDuck,
+                      },
+                  }
+              - column:
+                  {
+                    name: status,
+                    type: VARCHAR(20),
+                    defaultValue: "AVAILABLE",
+                    constraints: { nullable: false },
+                  }
+
+        # Check Constraint para o Enum (Precisa ser um comando separado no Liquibase)
+        - addCheckConstraint:
+            tableName: tb_duck
+            columnNames: status
+            constraintName: chk_duck_status
+            checkConstraint: "status IN ('AVAILABLE', 'SALED')"
+
+        # SALE
+        - createTable:
+            tableName: tb_sale
+            columns:
+              - column:
+                  {
+                    name: idSale,
+                    type: UUID,
+                    defaultValueComputed: "gen_random_uuid()",
+                    constraints: { primaryKey: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: idCustomer,
+                    type: UUID,
+                    constraints:
+                      {
+                        nullable: false,
+                        foreignKeyName: fk_sale_customer,
+                        referencedTableName: tb_customer,
+                        referencedColumnNames: idCustomer,
+                      },
+                  }
+              - column:
+                  {
+                    name: idSeller,
+                    type: UUID,
+                    constraints:
+                      {
+                        nullable: false,
+                        foreignKeyName: fk_sale_seller,
+                        referencedTableName: tb_seller,
+                        referencedColumnNames: idSeller,
+                      },
+                  }
+              - column:
+                  {
+                    name: sale_date,
+                    type: TIMESTAMP,
+                    defaultValueComputed: "CURRENT_TIMESTAMP",
+                  }
+              - column: { name: total_value, type: DECIMAL(10, 2) }
+
+        # SALE_ITEM
+        - createTable:
+            tableName: tb_sale_item
+            columns:
+              - column:
+                  {
+                    name: idSaleItem,
+                    type: UUID,
+                    defaultValueComputed: "gen_random_uuid()",
+                    constraints: { primaryKey: true, nullable: false },
+                  }
+              - column:
+                  {
+                    name: idSale,
+                    type: UUID,
+                    constraints:
+                      {
+                        nullable: false,
+                        foreignKeyName: fk_item_sale,
+                        referencedTableName: tb_sale,
+                        referencedColumnNames: idSale,
+                      },
+                  }
+              - column:
+                  {
+                    name: idDuck,
+                    type: UUID,
+                    constraints:
+                      {
+                        nullable: false,
+                        unique: true,
+                        foreignKeyName: fk_item_duck,
+                        referencedTableName: tb_duck,
+                        referencedColumnNames: idDuck,
+                      },
+                  }
+              - column:
+                  {
+                    name: unit_price,
+                    type: DECIMAL(10,
+                    2),
+                    constraints: { nullable: false },
+                  }
