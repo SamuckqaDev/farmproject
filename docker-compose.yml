@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:lastest
+    container_name: farm_db
+    restart: always
+    environment:
+      - POSTGRES_USER=duck
+      - POSTGRES_PASSWORD=duck_pass
+      - POSTGRES_DB=farm_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
