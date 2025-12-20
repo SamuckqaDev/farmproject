@@ -2,7 +2,7 @@ package br.com.samuckqadev.farmproject.service;
 
 import org.springframework.stereotype.Service;
 
-import br.com.samuckqadev.farmproject.dto.SellerRequestDTO;
+import br.com.samuckqadev.farmproject.dto.seller.SellerRequestDTO;
 import br.com.samuckqadev.farmproject.exception.seller.SellerCpfAlreadyExists;
 import br.com.samuckqadev.farmproject.model.Seller;
 import br.com.samuckqadev.farmproject.repository.SellerRepository;
@@ -26,6 +26,8 @@ public class SellerService {
         var sellerEntity = GenericMapperUtil
                 .parseObject(sellerRequestDTO, Seller.class);
         sellerEntity.setRegistration(SellerRegistrationGenerationUtil.generate());
+
+    
 
         sellerRepository.save(sellerEntity);
         return BaseResponse.created(null, "Vendedor cadastrado com sucesso!");

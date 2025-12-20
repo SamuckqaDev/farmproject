@@ -1,4 +1,4 @@
-package br.com.samuckqadev.farmproject.dto;
+package br.com.samuckqadev.farmproject.dto.seller;
 
 import org.hibernate.validator.constraints.br.CPF;
 
