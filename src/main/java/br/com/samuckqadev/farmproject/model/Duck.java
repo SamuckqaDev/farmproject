@@ -1,8 +1,8 @@
-package br.com.samuckqadev.formproject.model;
+package br.com.samuckqadev.farmproject.model;
 
 import java.util.UUID;
 
-import br.com.samuckqadev.formproject.enums.DuckStatusEnum;
+import br.com.samuckqadev.farmproject.enums.DuckStatusEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -1,4 +1,4 @@
-package br.com.samuckqadev.formproject;
+package br.com.samuckqadev.farmproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package br.com.samuckqadev.formproject.model;
+package br.com.samuckqadev.farmproject.model;
 
 import java.util.UUID;
 
@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class Seller {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,7 +28,7 @@ public class Seller {
     private String name;
 
     @Column(nullable = false, unique = true, length = 14)
-    private String cpf;
+    private String cpf; 
 
     @Column(nullable = false, unique = true, length = 50)
     private String registration;

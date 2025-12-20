@@ -1,4 +1,4 @@
-package br.com.samuckqadev.formproject.model;
+package br.com.samuckqadev.farmproject.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

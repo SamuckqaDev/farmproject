@@ -1,11 +1,12 @@
-package br.com.samuckqadev.formproject.repository;
+package br.com.samuckqadev.farmproject.repository;
 
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.samuckqadev.formproject.model.Customer;
+import br.com.samuckqadev.farmproject.model.Customer;
+
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, UUID>{
