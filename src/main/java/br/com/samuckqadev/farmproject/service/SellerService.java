@@ -27,10 +27,8 @@ public class SellerService {
                 .parseObject(sellerRequestDTO, Seller.class);
         sellerEntity.setRegistration(SellerRegistrationGenerationUtil.generate());
 
-    
-
         sellerRepository.save(sellerEntity);
-        return BaseResponse.created(null, "Vendedor cadastrado com sucesso!");
+        return BaseResponse.created(null, "Seller registred Successfuly!");
     }
 
 }

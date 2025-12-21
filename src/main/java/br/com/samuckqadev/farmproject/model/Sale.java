@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -25,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,6 +42,7 @@ public class Sale {
     @JoinColumn(name = "idSeller", nullable = false)
     private Seller seller;
 
+    @CreationTimestamp
     @Column(name = "sale_date", nullable = false)
     private LocalDateTime saleDate;
 

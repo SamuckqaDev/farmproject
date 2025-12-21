@@ -6,10 +6,14 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import br.com.samuckqadev.farmproject.model.Customer;
 import br.com.samuckqadev.farmproject.model.Seller;
+import jakarta.validation.constraints.NotBlank;
 
 
 @Repository
 public interface SellerRepository extends JpaRepository<Seller, UUID> {
     Optional<Seller> findByCpf(String cpf);
+
+    Optional<Seller> findByName(String sellerName);
 }

@@ -35,8 +35,8 @@ public class SaleItem {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idDuck", nullable = false, unique = true)
-    private Duck duck; // Garante que o pato é vendido apenas uma vez
-
+    private Duck duck; 
+    
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 }

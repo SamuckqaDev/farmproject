@@ -8,21 +8,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import br.com.samuckqadev.farmproject.response.BaseResponse;
 import br.com.samuckqadev.farmproject.exception.customer.CustomerAlreadyRegistredException;
+import br.com.samuckqadev.farmproject.exception.customer.CustomerNotFoundException; // Nova
+import br.com.samuckqadev.farmproject.exception.duck.DuckAlreadyExistsException;
+import br.com.samuckqadev.farmproject.exception.duck.DuckAlreadySaledException; // Nova
+import br.com.samuckqadev.farmproject.exception.duck.DuckMotherNotFoundException;
+import br.com.samuckqadev.farmproject.exception.duck.DuckNotFoundException; // Nova
 import br.com.samuckqadev.farmproject.exception.seller.SellerCpfAlreadyExists;
+import br.com.samuckqadev.farmproject.exception.seller.SellerNotFoundException; // Nova
 
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-/**
- * Manipulador global de exceções seguindo o padrão de projeto Farm API.
- * Centraliza o tratamento de erros e padroniza o retorno via BaseResponse.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        /**
-         * Captura exceções de negócio e erros comuns de runtime.
-         */
         @ExceptionHandler({ RuntimeException.class, IllegalArgumentException.class, IllegalStateException.class })
         public ResponseEntity<BaseResponse<String>> handleBusinessExceptions(RuntimeException ex) {
                 var baseResponse = BaseResponse.<String>error(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -31,10 +30,13 @@ public class GlobalExceptionHandler {
                                 .body(baseResponse);
         }
 
-        /**
-         * Captura exceções de recursos não encontrados (404 Not Found).
-         */
-        @ExceptionHandler({ NoSuchElementException.class })
+        @ExceptionHandler({
+                        NoSuchElementException.class,
+                        DuckMotherNotFoundException.class,
+                        CustomerNotFoundException.class,
+                        SellerNotFoundException.class,
+                        DuckNotFoundException.class
+        })
         public ResponseEntity<BaseResponse<String>> handleNotFoundException(RuntimeException ex) {
                 var baseResponse = BaseResponse.<String>error(ex.getMessage(), HttpStatus.NOT_FOUND);
                 return ResponseEntity
@@ -42,10 +44,12 @@ public class GlobalExceptionHandler {
                                 .body(baseResponse);
         }
 
-        /**
-         * Captura exceções específicas de conflito (ex: CPF duplicado).
-         */
-        @ExceptionHandler({ SellerCpfAlreadyExists.class, CustomerAlreadyRegistredException.class })
+        @ExceptionHandler({
+                        SellerCpfAlreadyExists.class,
+                        CustomerAlreadyRegistredException.class,
+                        DuckAlreadyExistsException.class,
+                        DuckAlreadySaledException.class
+        })
         public ResponseEntity<BaseResponse<String>> handleConflictException(RuntimeException ex) {
                 var baseResponse = BaseResponse.<String>error(ex.getMessage(), HttpStatus.CONFLICT);
                 return ResponseEntity
@@ -53,9 +57,6 @@ public class GlobalExceptionHandler {
                                 .body(baseResponse);
         }
 
-        /**
-         * Captura erros de validação do Bean Validation (@Valid).
-         */
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<BaseResponse<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
                 String errors = ex.getBindingResult()
@@ -70,9 +71,6 @@ public class GlobalExceptionHandler {
                                 .body(baseResponse);
         }
 
-        /**
-         * Fallback para qualquer outro erro inesperado no servidor.
-         */
         @ExceptionHandler(Exception.class)
         public ResponseEntity<BaseResponse<String>> handleGenericException(Exception ex) {
                 var baseResponse = BaseResponse.<String>error("Erro interno: " + ex.getMessage(),

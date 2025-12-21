@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder.Default;
 
@@ -23,6 +24,7 @@ import lombok.Builder.Default;
 @Table(name = "tb_duck")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
 public class Duck {
     @Id
