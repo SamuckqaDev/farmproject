@@ -10,5 +10,5 @@ import br.com.samuckqadev.farmproject.model.Sale;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, UUID> {
-    
+    boolean existsBySellerUuid(UUID idSeller);
 }

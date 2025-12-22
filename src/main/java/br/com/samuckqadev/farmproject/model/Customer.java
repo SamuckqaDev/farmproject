@@ -28,7 +28,6 @@ public class Customer {
     @Column(name = "name", nullable = false, length = 144)
     private String name;
 
-    // Ajustado o name para bater com o "elegible_discount" do seu Liquibase
     @Column(name = "elegible_discount", nullable = false)
     private boolean eligibleDiscount;
 

@@ -6,9 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.samuckqadev.farmproject.model.Customer;
 import br.com.samuckqadev.farmproject.model.Seller;
-import jakarta.validation.constraints.NotBlank;
 
 
 @Repository

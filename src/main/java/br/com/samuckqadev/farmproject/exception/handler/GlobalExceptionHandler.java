@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
         @ExceptionHandler({ RuntimeException.class, IllegalArgumentException.class, IllegalStateException.class })
         public ResponseEntity<BaseResponse<String>> handleBusinessExceptions(RuntimeException ex) {
                 var baseResponse = BaseResponse.<String>error(ex.getMessage(), HttpStatus.BAD_REQUEST);

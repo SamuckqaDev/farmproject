@@ -10,6 +10,7 @@ import br.com.samuckqadev.farmproject.model.Duck;
 import br.com.samuckqadev.farmproject.repository.DuckRepository;
 import br.com.samuckqadev.farmproject.response.BaseResponse;
 import br.com.samuckqadev.farmproject.util.GenericMapperUtil;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -18,6 +19,7 @@ public class DuckService {
 
     private final DuckRepository duckRepository;
 
+    @Transactional
     public BaseResponse<Void> saveDuck(DuckRequestDTO duckRequestDTO) {
         this.duckRepository.findByName(duckRequestDTO.name()).ifPresent(duck -> {
             throw new DuckAlreadyExistsException();

@@ -3,6 +3,7 @@ package br.com.samuckqadev.farmproject.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,59 +35,54 @@ public class SaleService {
 
     @Transactional
     public BaseResponse<Void> saveSale(SaleRequestDTO saleRequestDTO) {
-        // 1. Busca Cliente e Vendedor por nome [cite: 8, 11]
         var customer = customerRepository.findByName(saleRequestDTO.customerName())
                 .orElseThrow(CustomerNotFoundException::new);
 
         var seller = sellerRepository.findByName(saleRequestDTO.sellerName())
                 .orElseThrow(SellerNotFoundException::new);
 
-        // 2. Criação da Venda com data automática [cite: 19]
-        Sale sale = Sale.builder()
+        var sale = Sale.builder()
                 .customer(customer)
                 .seller(seller)
                 .items(new ArrayList<>())
                 .build();
 
-        BigDecimal subtotal = BigDecimal.ZERO;
+        List<SaleItem> items = saleRequestDTO.duckNames().stream()
+                .map(duckName -> {
+                    var duck = duckRepository.findByName(duckName)
+                            .orElseThrow(DuckNotFoundException::new);
 
-        // 3. Processamento dos Patos [cite: 17]
-        for (String duckName : saleRequestDTO.duckNames()) {
-            Duck duck = duckRepository.findByName(duckName)
-                    .orElseThrow(() -> new DuckNotFoundException());
+                    if (duck.getStatus() == DuckStatusEnum.SALED) {
+                        throw new DuckAlreadySaledException();
+                    }
 
-            // Validação: Não deve ser possível realizar a venda do mesmo pato mais de uma
-            // vez [cite: 20]
-            if (duck.getStatus() == DuckStatusEnum.SALED) {
-                throw new DuckAlreadySaledException();
-            }
+                    var unitPrice = calculateUnitPrice(duck);
 
-            // Cálculo do valor unitário conforme a quantidade de filhos
-            BigDecimal unitPrice = calculateUnitPrice(duck);
-            subtotal = subtotal.add(unitPrice);
+                    duck.setStatus(DuckStatusEnum.SALED);
+                    duckRepository.save(duck);
 
-            // Criação do item da venda [cite: 23]
-            SaleItem item = SaleItem.builder()
-                    .sale(sale)
-                    .duck(duck)
-                    .unitPrice(unitPrice)
-                    .build();
+                    return SaleItem.builder()
+                            .sale(sale)
+                            .duck(duck)
+                            .unitPrice(unitPrice)
+                            .build();
+                })
+                .toList();
 
-            sale.getItems().add(item);
+        sale.getItems().addAll(items);
 
-            duck.setStatus(DuckStatusEnum.SALED);
-            duckRepository.save(duck);
-        }
+        var subtotal = items.stream()
+                .map(SaleItem::getUnitPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // 4. Aplicação do desconto de 20% no VALOR TOTAL se elegível [cite: 10, 18]
-        if (customer.isEligibleDiscount()) {
-            BigDecimal discount = subtotal.multiply(new BigDecimal("0.20"));
-            sale.setTotalValue(subtotal.subtract(discount));
-        } else {
-            sale.setTotalValue(subtotal);
-        }
+        var totalValue = customer.isEligibleDiscount()
+                ? subtotal.multiply(new BigDecimal("0.80"))
+                : subtotal;
+
+        sale.setTotalValue(totalValue);
 
         saleRepository.save(sale);
+
         return BaseResponse.created(null, "Sale registered successfully!");
     }
 
@@ -97,11 +93,11 @@ public class SaleService {
         long childrenCount = duckRepository.countByMother_IdDuck(duck.getIdDuck());
 
         if (childrenCount == 1) {
-            return new BigDecimal("50.00"); 
+            return new BigDecimal("50.00");
         } else if (childrenCount == 2) {
-            return new BigDecimal("25.00"); 
+            return new BigDecimal("25.00");
         } else {
-            return new BigDecimal("70.00"); 
+            return new BigDecimal("70.00");
         }
     }
 }
