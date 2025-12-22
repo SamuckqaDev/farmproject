@@ -21,9 +21,7 @@ public class BaseResponse<T> {
     private T data;
     private boolean success;
 
-    /**
-     * Resposta de sucesso padrão (Status 200 OK)
-     */
+
     public static <T> BaseResponse<T> success(T data) {
         return BaseResponse.<T>builder()
                 .data(data)
@@ -32,10 +30,18 @@ public class BaseResponse<T> {
                 .success(true)
                 .build();
     }
+    
+     public static <T> BaseResponse<T> success(T data, int statusCode, String message) {
+        return BaseResponse.<T>builder()
+                .data(data)
+                .message(message)
+                .statusCode(statusCode)
+                .success(true)
+                .build();
+    }
 
-    /**
-     * Resposta de sucesso com mensagem customizada
-     */
+
+ 
     public static <T> BaseResponse<T> success(T data, String message) {
         return BaseResponse.<T>builder()
                 .data(data)
@@ -45,9 +51,7 @@ public class BaseResponse<T> {
                 .build();
     }
 
-    /**
-     * Resposta de sucesso para criações (Status 201 Created)
-     */
+
     public static <T> BaseResponse<T> created(T data, String message) {
         return BaseResponse.<T>builder()
                 .data(data)
@@ -57,9 +61,7 @@ public class BaseResponse<T> {
                 .build();
     }
 
-    /**
-     * Resposta de erro padrão (Status 400 Bad Request)
-     */
+
     public static <T> BaseResponse<T> error(String message) {
         return BaseResponse.<T>builder()
                 .message(message)
@@ -68,9 +70,7 @@ public class BaseResponse<T> {
                 .build();
     }
 
-    /**
-     * Resposta de erro customizada (Permite definir o StatusCode)
-     */
+ 
     public static <T> BaseResponse<T> error(String message, HttpStatus status) {
         return BaseResponse.<T>builder()
                 .message(message)

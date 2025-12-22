@@ -1,7 +1,11 @@
 package br.com.samuckqadev.farmproject.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import br.com.samuckqadev.farmproject.dto.seller.SellerRankingProjectionDTO;
 import br.com.samuckqadev.farmproject.dto.seller.SellerRequestDTO;
 import br.com.samuckqadev.farmproject.exception.seller.SellerCpfAlreadyExists;
 import br.com.samuckqadev.farmproject.exception.seller.SellerHasAssociatedSalesException;
@@ -43,13 +47,28 @@ public class SellerService {
         var seller = sellerRepository.findByCpf(cpf)
                 .orElseThrow(() -> new SellerNotFoundException());
 
-        if (saleRepository.existsBySellerUuid(seller.getIdSeller())) {
+        if (saleRepository.existsBySellerIdSeller(seller.getIdSeller())) {
             throw new SellerHasAssociatedSalesException();
         }
 
         sellerRepository.delete(seller);
 
         return BaseResponse.success(null, "Seller removed successfuly!");
+    }
+
+    public BaseResponse<List<SellerRankingProjectionDTO>> getSellerRanking(LocalDateTime startDate,
+            LocalDateTime endDate) {
+        // Se as datas vierem nulas, define um período padrão (ex: últimos 30 dias)
+        var start = (startDate == null) ? LocalDateTime.now().minusDays(30) : startDate;
+        var end = (endDate == null) ? LocalDateTime.now() : endDate;
+
+        var ranking = saleRepository.getSellerRanking(start, end);
+
+        if (ranking.isEmpty()) {
+            return BaseResponse.success(ranking, "No sales found for the selected period.");
+        }
+
+        return BaseResponse.success(ranking, "Seller ranking retrieved successfully!");
     }
 
 }
