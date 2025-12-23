@@ -1,9 +1,13 @@
 package br.com.samuckqadev.farmproject.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import br.com.samuckqadev.farmproject.dto.duck.DuckReportDTO;
 import br.com.samuckqadev.farmproject.dto.duck.DuckRequestDTO;
 import br.com.samuckqadev.farmproject.dto.duck.DuckResponseDTO;
 import br.com.samuckqadev.farmproject.enums.DuckStatusEnum;
@@ -24,6 +28,7 @@ public class DuckService {
 
     private final DuckRepository duckRepository;
     private final SaleRepository saleRepository;
+    private final SaleReportService saleReportService;
 
     @Transactional
     public BaseResponse<Void> saveDuck(DuckRequestDTO duckRequestDTO) {
@@ -42,6 +47,54 @@ public class DuckService {
         return BaseResponse.created(null, "Duck registered successfully!");
     }
 
+    public byte[] emitReport(LocalDateTime start, LocalDateTime end) throws Exception {
+        List<SaleItem> soldItems = this.saleRepository.findAllSalesWithItems().stream()
+                .<SaleItem>flatMap(sale -> sale.getItems().stream())
+                .toList();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        List<DuckReportDTO> reportData = soldItems.stream()
+                .flatMap(item -> {
+                    Duck duck = item.getDuck();
+                    Duck mother = duck.getMother();
+
+                    // 1. Criamos a linha do pato vendido (seja ele mãe ou filho)
+                    DuckReportDTO duckRow = DuckReportDTO.builder()
+                            .duckName(mother != null ? "   " + duck.getName() : duck.getName()) // Recuo apenas se for
+                                                                                                // filho
+                            .status("Vendido")
+                            .customerName(item.getSale().getCustomer().getName())
+                            .customerType(
+                                    item.getSale().getCustomer().isEligibleDiscount() ? "Com Desconto" : "Sem Desconto")
+                            .value("R$ " + String.format("%.2f", item.getUnitPrice()))
+                            .saleDate(item.getSale().getSaleDate().format(formatter))
+                            .sellerName(item.getSale().getSeller().getName())
+                            .build();
+
+                    // 2. Se tiver mãe, gera a linha da mãe (Disponível) + a linha do filho
+                    if (mother != null) {
+                        DuckReportDTO motherRow = DuckReportDTO.builder()
+                                .duckName(mother.getName())
+                                .status("Disponível")
+                                .customerName("-")
+                                .customerType("-")
+                                .value("-")
+                                .saleDate("-")
+                                .sellerName("-")
+                                .build();
+
+                        return Stream.of(motherRow, duckRow);
+                    }
+
+                    // 3. Se não tiver mãe (ele é a mãe), gera apenas a linha dele
+                    return Stream.of(duckRow);
+                })
+                .toList();
+
+        return saleReportService.exportDetailedSalesToExcel(reportData, start, end);
+    }
+
     public BaseResponse<List<DuckResponseDTO>> findAllDuckSaled() {
         List<DuckResponseDTO> ducks = this.saleRepository.findAllSalesWithItems().stream()
                 .<SaleItem>flatMap(sale -> sale.getItems().stream())
@@ -54,11 +107,7 @@ public class DuckService {
                         .build())
                 .toList();
 
-        if (ducks.isEmpty()) {
-            return BaseResponse.success(ducks, "No ducks saled found in the system.");
-        }
-
-        return BaseResponse.success(ducks, "Ducks saled listed successfully");
+        return ducks.isEmpty() ? BaseResponse.success(ducks, "No ducks saled found.")
+                : BaseResponse.success(ducks, "Ducks saled listed successfully");
     }
-
 }
