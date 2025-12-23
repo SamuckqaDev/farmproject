@@ -86,9 +86,7 @@ public class SaleService {
         return BaseResponse.created(null, "Sale registered successfully!");
     }
 
-    /**
-     * Lógica de precificação baseada no número de filhos
-     */
+ 
     private BigDecimal calculateUnitPrice(Duck duck) {
         long childrenCount = duckRepository.countByMother_IdDuck(duck.getIdDuck());
 

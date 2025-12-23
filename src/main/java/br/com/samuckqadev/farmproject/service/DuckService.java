@@ -59,10 +59,8 @@ public class DuckService {
                     Duck duck = item.getDuck();
                     Duck mother = duck.getMother();
 
-                    // 1. Criamos a linha do pato vendido (seja ele mãe ou filho)
                     DuckReportDTO duckRow = DuckReportDTO.builder()
-                            .duckName(mother != null ? "   " + duck.getName() : duck.getName()) // Recuo apenas se for
-                                                                                                // filho
+                            .duckName(mother != null ? "   " + duck.getName() : duck.getName())                                      
                             .status("Vendido")
                             .customerName(item.getSale().getCustomer().getName())
                             .customerType(
@@ -72,7 +70,6 @@ public class DuckService {
                             .sellerName(item.getSale().getSeller().getName())
                             .build();
 
-                    // 2. Se tiver mãe, gera a linha da mãe (Disponível) + a linha do filho
                     if (mother != null) {
                         DuckReportDTO motherRow = DuckReportDTO.builder()
                                 .duckName(mother.getName())
@@ -87,7 +84,6 @@ public class DuckService {
                         return Stream.of(motherRow, duckRow);
                     }
 
-                    // 3. Se não tiver mãe (ele é a mãe), gera apenas a linha dele
                     return Stream.of(duckRow);
                 })
                 .toList();
