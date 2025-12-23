@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/customer")
-// Tag define o nome do grupo no Swagger UI
 @Tag(name = "Customer", description = "Recursos para gerenciamento de clientes da fazenda")
 public class CustomerController {
 

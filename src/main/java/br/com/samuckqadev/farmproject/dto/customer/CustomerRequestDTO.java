@@ -6,7 +6,8 @@ import lombok.Builder;
 
 @Builder
 public record CustomerRequestDTO(
-        @NotBlank(message = "Name cannot be blank") @Size(max = 144, message = "Name must not exceed 144 characters") String name,
-
-        Boolean eligibleDiscount) {
-}
+        @NotBlank(message = "Name cannot be blank") 
+        @Size(max = 144, message = "Name must not exceed 144 characters") 
+        String name,
+        Boolean eligibleDiscount
+) {}
